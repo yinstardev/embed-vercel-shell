@@ -6,10 +6,12 @@ export default defineConfig({
     allowedHosts: ['.trycloudflare.com']
   },
   build: {
-    rollupOptions: {
-      input: 'src/script.ts'
-    },
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: './index.html'
+      }
+    }
   }
 }) 

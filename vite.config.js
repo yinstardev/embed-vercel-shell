@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   server: {
     port: 8080,
-    allowedHosts: ['.trycloudflare.com']
+    allowedHosts: ['*']
   },
   build: {
     outDir: 'dist',

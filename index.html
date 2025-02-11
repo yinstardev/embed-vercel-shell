@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.725">
+    <title>Embed Shell</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+      }
+      iframe {
+        border: none;
+        width: 100%;
+        height: 100%;
+      }
+      #ts-embed {
+        background-color: red;
+        height: 100vh;
+      }
+      @media screen and (max-width: 375px) {
+        body {
+          font-size: 14px; 
+        }
+      }
+
+      @media screen and (max-width: 428px) and (min-width: 376px) {
+        body {
+          font-size: 16px;
+        }
+      }
+
+      @media screen and (min-width: 429px) {
+        body {
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+  <script>
+    (function () {
+      const screenWidth = window.innerWidth;
+      let scale;
+
+      if (screenWidth <= 375) {
+        // iPhone SE and similarly small devices
+        scale = 0.65;
+      } else if (screenWidth > 375 && screenWidth <= 430) {
+        // Mid-sized devices like iPhone 14
+        scale = 0.7;
+      } else {
+        // Larger devices like iPhone 16 Pro and beyond
+        scale = 0.725;
+      }
+
+      const metaTag = document.querySelector("meta[name='viewport']") || document.createElement("meta");
+      metaTag.name = "viewport";
+      metaTag.content = `width=device-width, initial-scale=${scale}`;
+      // alert(scale);
+      
+      if (!metaTag.parentNode) {
+        document.head.appendChild(metaTag);
+      }
+
+      console.log(`Viewport meta tag set for screenWidth ${screenWidth}px: scale=${scale}`);
+    })();
+  </script>
+  <body>
+        <div id="ts-embed"></div>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/@thoughtspot/visual-embed-sdk/dist/tsembed.min.js" type="module"></script> -->
+        <script type="module" src="/src/script.ts"></script>
+  </body>
+
+</html>
+

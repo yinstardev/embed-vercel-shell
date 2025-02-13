@@ -79,9 +79,10 @@ const handleInit = async (parsed: any) => {
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
+    alert("init handler");
     if (currentEmbedConfig) {
       const authEventEmitter = await init(currentEmbedConfig);
-      
+      alert("init called");
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
         alert("Success: TrustedAuthTokenCookieless");

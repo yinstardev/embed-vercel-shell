@@ -84,15 +84,18 @@ const handleInit = async (parsed: any) => {
       
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
+        alert("Success: TrustedAuthTokenCookieless");
         console.log("Success: TrustedAuthTokenCookieless");
       });
 
       authEventEmitter.on(AuthStatus.FAILURE, (error) => {
+        alert(`Auth fail ${error}`);
         console.log(`Auth fail ${error}`);
         initializationComplete = false;
       });
 
       authEventEmitter.on(AuthStatus.SDK_SUCCESS, () => {
+        alert("Success: SDK_SUCCESS");
         initTiming.end = Date.now();
         initTiming.total = (initTiming.end - initTiming.start) / 1000;
         console.log("Login success");
@@ -109,6 +112,7 @@ const handleInit = async (parsed: any) => {
 }; 
 
 const handleTokenResponse = (parsed: any) => {
+  alert(`Token response: ${JSON.stringify(parsed)}`);
   if (tokenResolver && parsed.token) {
     tokenResolver(parsed.token);
   }
@@ -160,7 +164,7 @@ function initVercelShellMsg() {
 
 function initializeVercelShell() {
     initVercelShellMsg();
-    
+    alert("initializeVercelShell");
     setTimeout(() => {
         if (!isVercelShellInitialized) {
             console.log("Retrying Vercel shell initialization...");

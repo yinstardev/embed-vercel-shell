@@ -5,6 +5,7 @@ import {
   SearchEmbed,
   EmbedConfig as BaseEmbedConfig,
   AuthStatus,
+  EmbedConfig,
 } from "@thoughtspot/visual-embed-sdk";
 
 
@@ -81,7 +82,9 @@ const handleInit = async (parsed: any) => {
     }
     alert("init handler");
     if (currentEmbedConfig) {
-      const authEventEmitter = await init(currentEmbedConfig);
+      alert(`currentEmbedConfig: ${JSON.stringify(currentEmbedConfig)}`);
+      alert(`currentEmbedConfig.getTokenFromSDK: ${currentEmbedConfig.getAuthToken}`);
+      const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
       alert("init called");
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {

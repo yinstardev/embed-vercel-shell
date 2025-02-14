@@ -80,12 +80,8 @@ const handleInit = async (parsed: any) => {
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
-    alert("init handler");
-    if (currentEmbedConfig) {
-      alert(`currentEmbedConfig: ${JSON.stringify(currentEmbedConfig)}`);
-      alert(`currentEmbedConfig.getTokenFromSDK: ${currentEmbedConfig.getAuthToken}`);
+     if (currentEmbedConfig) {
       const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
-      alert("init called");
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
         alert("Success: TrustedAuthTokenCookieless");
@@ -116,7 +112,6 @@ const handleInit = async (parsed: any) => {
 }; 
 
 const handleTokenResponse = (parsed: any) => {
-  alert(`Token response: ${JSON.stringify(parsed)}`);
   if (tokenResolver && parsed.token) {
     tokenResolver(parsed.token);
   }
@@ -168,7 +163,6 @@ function initVercelShellMsg() {
 
 function initializeVercelShell() {
     initVercelShellMsg();
-    alert("initializeVercelShell");
     setTimeout(() => {
         if (!isVercelShellInitialized) {
             console.log("Retrying Vercel shell initialization...");
@@ -233,7 +227,11 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...viewConfig
+            ...viewConfig,
+            additionalFlags: {
+              "flipTooltipToContextMenuEnabled": "true",
+              "contextMenuEnabledOnWhichClick": "left",
+            }
         });
     } else if (typeofEmbed === "SearchEmbed") {
         embedInstance = new SearchEmbed("#ts-embed", {

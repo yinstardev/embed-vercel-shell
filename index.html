@@ -2,24 +2,53 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.725">
+    <meta name="viewport" content="width=device-width, initial-scale=0.725, user-scalable=no, maximum-scale=0.725">
     <title>Embed Shell</title>
     <style>
-      html, body {
+      html {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
         margin: 0;
         padding: 0;
         height: 100%;
         width: 100%;
+        position: fixed;
+        overflow: hidden;
+        -webkit-overflow-scrolling: touch;
       }
+
       iframe {
         border: none;
         width: 100%;
         height: 100%;
       }
+
       #ts-embed {
         background-color: red;
         height: 100vh;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
+
+      /* Prevent zoom on inputs */
+      input[type="text"],
+      input[type="search"],
+      input[type="number"],
+      select,
+      textarea {
+        font-size: 16px !important;
+        transform: scale(1);
+      }
+
       @media screen and (max-width: 375px) {
         body {
           font-size: 14px; 
@@ -57,12 +86,19 @@
 
       const metaTag = document.querySelector("meta[name='viewport']") || document.createElement("meta");
       metaTag.name = "viewport";
-      metaTag.content = `width=device-width, initial-scale=${scale}`;
-      // alert(scale);
+      metaTag.content = `width=device-width, initial-scale=${scale}, maximum-scale=${scale}, user-scalable=no`;
       
       if (!metaTag.parentNode) {
         document.head.appendChild(metaTag);
       }
+
+      // Prevent viewport changes when keyboard appears
+      window.addEventListener('resize', function() {
+        const currentScale = scale;
+        if (metaTag.content !== `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`) {
+          metaTag.content = `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`;
+        }
+      });
 
       console.log(`Viewport meta tag set for screenWidth ${screenWidth}px: scale=${scale}`);
     })();

@@ -45,6 +45,7 @@
       input[type="number"],
       select,
       textarea {
+        transform: translateZ(0);
         font-size: 16px !important;
         transform: scale(1);
       }
@@ -70,9 +71,9 @@
   </head>
   <script>
     (function () {
-      const screenWidth = window.innerWidth;
+      let screenWidth = window.innerWidth;
       let scale;
-
+  
       if (screenWidth <= 375) {
         // iPhone SE and similarly small devices
         scale = 0.65;
@@ -83,7 +84,7 @@
         // Larger devices like iPhone 16 Pro and beyond
         scale = 0.725;
       }
-
+  
       const metaTag = document.querySelector("meta[name='viewport']") || document.createElement("meta");
       metaTag.name = "viewport";
       metaTag.content = `width=device-width, initial-scale=${scale}, maximum-scale=${scale}, user-scalable=no`;
@@ -91,16 +92,25 @@
       if (!metaTag.parentNode) {
         document.head.appendChild(metaTag);
       }
-
-      // Prevent viewport changes when keyboard appears
+  
       window.addEventListener('resize', function() {
+        const newScreenWidth = window.innerWidth;
+        if (newScreenWidth !== screenWidth) {
+          screenWidth = newScreenWidth;
+          if (screenWidth <= 375) {
+            scale = 0.65;
+          } else if (screenWidth > 375 && screenWidth <= 430) {
+            scale = 0.7;
+          } else {
+            scale = 0.725;
+          }
+        }
         const currentScale = scale;
         if (metaTag.content !== `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`) {
           metaTag.content = `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`;
         }
       });
 
-      console.log(`Viewport meta tag set for screenWidth ${screenWidth}px: scale=${scale}`);
     })();
   </script>
   <body>

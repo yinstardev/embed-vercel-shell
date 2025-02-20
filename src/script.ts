@@ -41,6 +41,10 @@ let initializationComplete = false;
 let currentViewConfig: any;
 
 let isVercelShellInitialized = false;
+const eventResponders = new Map<string, Function>();
+
+// timeout to clean up stale responders
+const RESPONDER_TIMEOUT = 30000;
 
 window.addEventListener("message", (event: any) => {
   // let parsed: ParsedMessage;
@@ -63,9 +67,20 @@ const handleMessages = (parsed: any) => {
       handleEmbed(parsed);
       break;
 
-    case "HOST_EVENT":
+    case "EVENT":
       handleHostEvent(parsed);
       break;
+    
+    case "EVENT_REPLY": {
+      if (parsed.eventId) {
+          const responderFn = eventResponders.get(parsed.eventId);
+            if (responderFn) {
+              responderFn(parsed.payload);
+              eventResponders.delete(parsed.eventId);
+          }
+      }
+      break;
+    }
 
     default:
       console.warn("Unknown message type:", parsed.type);
@@ -203,7 +218,7 @@ function sendHostEventReply(eventId: string | undefined, data: HostEventReplyDat
   if (!eventId) return;
   window.ReactNativeWebView?.postMessage(
     JSON.stringify({
-      type: "HOST_EVENT_REPLY",
+      type: "EVENT_REPLY",
       eventId,
       data,
     })
@@ -246,19 +261,41 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   embedInstance.render();
   currentEmbed = embedInstance;
 
-    currentEmbed.on("*" as any, (embedEvent: any, data: any) => {
-        const typeOfEvent = embedEvent.type;
-        if (typeOfEvent) {
-            window.ReactNativeWebView?.postMessage(
-                JSON.stringify({
-                    type: "EMBED_EVENT",
-                    eventName: typeOfEvent,
-                    data: embedEvent.data,
-                })
-            );
+    currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {
+        const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
+        
+        if (responderFn && eventId) {
+            setTimeout(() => {
+                if (eventResponders.has(eventId)) {
+                    console.warn(`Responder ${eventId} timed out`);
+                    eventResponders.delete(eventId);
+                }
+            }, RESPONDER_TIMEOUT);
+
+            eventResponders.set(eventId, responderFn);
         }
+
+        window.ReactNativeWebView?.postMessage(
+            JSON.stringify({
+                type: "EVENT",
+                eventId,
+                eventName: embedEvent.type,
+                payload: embedEvent.data,
+                hasResponder: !!responderFn
+            })
+        );
     });
 }
+
+// Cleanup function that can be called periodically
+function cleanupStaleResponders() {
+    console.log(`Current responders count: ${eventResponders.size}`);
+    if (eventResponders.size > 100) { 
+        console.warn('High number of stored responders');
+    }
+}
+
+setInterval(cleanupStaleResponders, RESPONDER_TIMEOUT);
 
 // // Reset flag on visibility change
 // document.addEventListener('visibilitychange', () => {

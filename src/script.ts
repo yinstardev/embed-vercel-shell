@@ -50,6 +50,7 @@ window.addEventListener("message", (event: any) => {
   // let parsed: ParsedMessage;
   let parsed: any;
   parsed = event.data as any;
+  alert(`Parsed ${JSON.stringify(parsed)}`);
   handleMessages(parsed);
 });
 

@@ -41,6 +41,9 @@ let initializationComplete = false;
 let currentViewConfig: any;
 
 let isVercelShellInitialized = false;
+const eventResponders = new Map<string, Function>();
+
+const RESPONDER_TIMEOUT = 30000;
 
 window.addEventListener("message", (event: any) => {
   // let parsed: ParsedMessage;
@@ -66,11 +69,26 @@ const handleMessages = (parsed: any) => {
     case "HOST_EVENT":
       handleHostEvent(parsed);
       break;
+    
+    case "EMBED_EVENT_REPLY":
+      handleEmbedEvent(parsed);
+      break;
 
     default:
       console.warn("Unknown message type:", parsed.type);
   }
 
+}
+
+const handleEmbedEvent = (parsed: any) => {
+  const eventId = parsed.eventId;
+  if(eventId){
+    const responderFn = eventResponders.get(eventId);
+    if(responderFn) {
+      responderFn(parsed.payload);
+      eventResponders.delete(eventId);
+    }
+  }
 }
 
 const handleInit = async (parsed: any) => {
@@ -246,18 +264,36 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   embedInstance.render();
   currentEmbed = embedInstance;
 
-    currentEmbed.on("*" as any, (embedEvent: any, data: any) => {
-        const typeOfEvent = embedEvent.type;
-        if (typeOfEvent) {
+    currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {
+      const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
+      if(responderFn && eventId) {
+        setTimeout(() => {
+          if (eventResponders.has(eventId)) {
+            console.warn(`Responder ${eventId} timeout!!`);
+            eventResponders.delete(eventId);
+          }
+        }, RESPONDER_TIMEOUT);
+
+        eventResponders.set(eventId, responderFn);
+      }
+
             window.ReactNativeWebView?.postMessage(
                 JSON.stringify({
                     type: "EMBED_EVENT",
-                    eventName: typeOfEvent,
+                    eventId,
+                    eventName: embedEvent.type,
                     data: embedEvent.data,
+                    hasResponder: !!responderFn
                 })
             );
-        }
+
     });
+}
+
+function cleanupStaleResponders() {
+  if (eventResponders.size > 100) { 
+    console.warn('High number of stored responders');
+  }
 }
 
 // // Reset flag on visibility change

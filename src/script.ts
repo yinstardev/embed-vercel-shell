@@ -100,6 +100,7 @@ const handleInit = async (parsed: any) => {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
      if (currentEmbedConfig) {
+      alert("initializing embed")
       const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {

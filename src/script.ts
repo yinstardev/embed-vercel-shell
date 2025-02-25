@@ -134,7 +134,8 @@ const handleInit = async (parsed: any) => {
       alert(`Error initializing embed: ${error}`);
       console.error("Error initializing embed:", error);
     }
-}; 
+}
+}
 
 const handleTokenResponse = (parsed: any) => {
   if (tokenResolver && parsed.token) {

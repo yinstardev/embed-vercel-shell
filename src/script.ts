@@ -95,7 +95,7 @@ const handleEmbedEvent = (parsed: any) => {
 const handleInit = async (parsed: any) => {
 
     currentEmbedConfig = parsed.payload || null;
-
+    alert(`currentEmbedConfig ${JSON.stringify(currentEmbedConfig)}`)
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
@@ -162,6 +162,7 @@ const handleEmbed = (parsed: any) => {
 }
 
 function requestAuthToken(): Promise<string> {
+   alert("sending .... request auth token")
     window.ReactNativeWebView?.postMessage(
         JSON.stringify({ type: "REQUEST_AUTH_TOKEN" })
     );

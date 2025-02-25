@@ -49,7 +49,6 @@ window.addEventListener("message", (event: any) => {
   // let parsed: ParsedMessage;
   let parsed: any;
   parsed = event.data as any;
-  alert(`parsed ${JSON.stringify(parsed)}`);
   handleMessages(parsed);
 });
 
@@ -95,12 +94,10 @@ const handleEmbedEvent = (parsed: any) => {
 const handleInit = async (parsed: any) => {
 
     currentEmbedConfig = parsed.payload || null;
-    alert(`currentEmbedConfig ${JSON.stringify(currentEmbedConfig)}`)
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
      if (currentEmbedConfig) {
-      alert("initializing embed")
       try {
         const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
 
@@ -131,7 +128,6 @@ const handleInit = async (parsed: any) => {
         }
       });
     } catch (error) {
-      alert(`Error initializing embed: ${error}`);
       console.error("Error initializing embed:", error);
     }
 }
@@ -169,7 +165,6 @@ const handleEmbed = (parsed: any) => {
 }
 
 function requestAuthToken(): Promise<string> {
-   alert("sending .... request auth token")
     window.ReactNativeWebView?.postMessage(
         JSON.stringify({ type: "REQUEST_AUTH_TOKEN" })
     );

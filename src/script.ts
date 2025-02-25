@@ -101,7 +101,9 @@ const handleInit = async (parsed: any) => {
     }
      if (currentEmbedConfig) {
       alert("initializing embed")
-      const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
+      try {
+        const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
+
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
         alert("Success: TrustedAuthTokenCookieless");
@@ -128,6 +130,9 @@ const handleInit = async (parsed: any) => {
           );
         }
       });
+    } catch (error) {
+      alert(`Error initializing embed: ${error}`);
+      console.error("Error initializing embed:", error);
     }
 }; 
 

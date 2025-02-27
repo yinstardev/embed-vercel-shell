@@ -246,7 +246,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
             ...viewConfig,
-            hiddenActions: [Action.UpdateTML,Action.ManagePipelines, Action.SchedulesList,Action.EditTML, Action.SyncToSlack, Action.SyncToTeams, Action.Schedule,Action.AskAi, Action.CreateMonitor, Action.AIHighlights, Action.Share, Action.ShareViz, Action.RenameModalTitleDescription, Action.Edit, Action.MakeACopy, Action.DownloadAsPdf, Action.DownloadAsCsv, Action.ExportTML, Action.DownloadAsPdf, Action.Present, Action.RequestVerification, Action.LiveboardInfo, Action.Pin, Action.Explore, Action.ShowUnderlyingData, Action.Download, Action.CopyLink, Action.SpotIQAnalyze, Action.SyncToOtherApps, Action.SyncToSheets, Action.SyncToSheets, Action.SyncToOtherApps],
+            visibleActions: [Action.DrillDown, Action.AddFilter],
             additionalFlags: {
               "flipTooltipToContextMenuEnabled": "true",
               "contextMenuEnabledOnWhichClick": "left",

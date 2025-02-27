@@ -46,7 +46,6 @@ const eventResponders = new Map<string, Function>();
 const RESPONDER_TIMEOUT = 30000;
 
 window.addEventListener("message", (event: any) => {
-  // let parsed: ParsedMessage;
   let parsed: any;
   parsed = event.data as any;
   handleMessages(parsed);
@@ -103,18 +102,15 @@ const handleInit = async (parsed: any) => {
 
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
-        alert("Success: TrustedAuthTokenCookieless");
         console.log("Success: TrustedAuthTokenCookieless");
       });
 
       authEventEmitter.on(AuthStatus.FAILURE, (error) => {
-        alert(`Auth fail ${error}`);
         console.log(`Auth fail ${error}`);
         initializationComplete = false;
       });
 
       authEventEmitter.on(AuthStatus.SDK_SUCCESS, () => {
-        alert("Success: SDK_SUCCESS");
         initTiming.end = Date.now();
         initTiming.total = (initTiming.end - initTiming.start) / 1000;
         console.log("Login success");

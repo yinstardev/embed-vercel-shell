@@ -1,35 +1,33 @@
-import { Action } from "@thoughtspot/visual-embed-sdk"
+import { Action } from "@thoughtspot/visual-embed-sdk";
+
+const DEFAULT_VIEW_CONFIG = {
+  visibleActions: [Action.DrillDown, Action.AddFilter],
+  additionalFlags: [
+    {
+      flipTooltipToContextMenuEnabled: "true",
+      contextMenuEnabledOnWhichClick: "left",
+    },
+  ],
+};
 
 export const validateAndMergeViewConfig = (viewConfig: any) => {
-    if(viewConfig.defaultActionsDisabled) {
-        alert("Inside here, should return from here.");
-        return viewConfig;
+  if (viewConfig && viewConfig.defaultActionsDisabled) {
+    return { ...viewConfig }; 
+  }
+
+  let mergedConfig = { ...DEFAULT_VIEW_CONFIG };
+
+  if (viewConfig) {
+    if (viewConfig.visibleActions && Array.isArray(viewConfig.visibleActions)) {
+      mergedConfig.visibleActions = [...DEFAULT_VIEW_CONFIG.visibleActions, ...viewConfig.visibleActions];
     }
 
-    if(viewConfig.visibleActions){
-        viewConfig.visibleActions = [...viewConfig.visibleActions, Action.DrillDown, Action.AddFilter];
+    if (viewConfig.additionalFlags && Array.isArray(viewConfig.additionalFlags)) {
+      mergedConfig.additionalFlags = [...DEFAULT_VIEW_CONFIG.additionalFlags, ...viewConfig.additionalFlags];
     }
 
-    if(viewConfig.additionalFlags){
-        viewConfig.additionalFlags = [...viewConfig.additionalFlags, {
-            "flipTooltipToContextMenuEnabled": "true",
-            "contextMenuEnabledOnWhichClick": "left",
-        }];
-    }
+    mergedConfig = { ...mergedConfig, ...viewConfig };
+  }
 
-    const defaultViewConfig = {
-        visibleActions: [Action.DrillDown, Action.AddFilter],
-        additionalFlags: [
-            {
-                "flipTooltipToContextMenuEnabled": "true",
-                "contextMenuEnabledOnWhichClick": "left",
-            }
-        ]
-    }
-
-    if (!viewConfig) {
-        return defaultViewConfig;
-    }
-
-    return { ...defaultViewConfig, ...viewConfig };
-}
+  return mergedConfig;
+};

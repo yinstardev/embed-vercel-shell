@@ -2,6 +2,7 @@ import { Action } from "@thoughtspot/visual-embed-sdk"
 
 export const validateAndMergeViewConfig = (viewConfig: any) => {
     if(viewConfig.defaultActionsDisabled) {
+        alert("Inside here, should return from here.");
         return viewConfig;
     }
 

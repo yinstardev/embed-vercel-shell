@@ -253,7 +253,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     }
 
   let embedInstance: LiveboardEmbed | SearchEmbed | null = null;
-    alert(` This is the final config ${validateAndMergeViewConfig(viewConfig)}`);
+    alert(` This is the final config ${JSON.stringify(validateAndMergeViewConfig(viewConfig))}`);
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
             ...validateAndMergeViewConfig(viewConfig),

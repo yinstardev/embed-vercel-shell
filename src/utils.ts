@@ -25,9 +25,10 @@ export const validateAndMergeViewConfig = (viewConfig: any) => {
     return updatedConfig;
   }
 
-  if(viewConfig.visibleActions && Array.isArray(viewConfig.visibleActions)) {
-    updatedConfig.visibleActions = [...DEFAULT_VIEW_CONFIG.visibleActions, ...viewConfig.visibleActions];
-  }
+  updatedConfig.visibleActions = [
+    ...DEFAULT_VIEW_CONFIG.visibleActions,
+    ...(viewConfig.visibleActions ? viewConfig.visibleActions : []),
+  ];  
 
   return updatedConfig;
 };

@@ -8,7 +8,7 @@ import {
   EmbedConfig,
   Action,
 } from "@thoughtspot/visual-embed-sdk";
-
+import { validateAndMergeViewConfig } from "./utils";
 
 declare global {
   interface Window {
@@ -91,21 +91,23 @@ const handleEmbedEvent = (parsed: any) => {
 }
 
 const handleInit = async (parsed: any) => {
-
+  try {
     currentEmbedConfig = parsed.payload || null;
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
-     if (currentEmbedConfig) {
-      try {
-        const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
+    alert(`currentEmbedConfig: ${JSON.stringify(currentEmbedConfig)}`);
+    if (currentEmbedConfig) {
+      const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
 
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
+        alert("Success: TrustedAuthTokenCookieless");
         console.log("Success: TrustedAuthTokenCookieless");
       });
 
       authEventEmitter.on(AuthStatus.FAILURE, (error) => {
+        alert(`Auth fail ${error}`);
         console.log(`Auth fail ${error}`);
         initializationComplete = false;
       });
@@ -113,6 +115,7 @@ const handleInit = async (parsed: any) => {
       authEventEmitter.on(AuthStatus.SDK_SUCCESS, () => {
         initTiming.end = Date.now();
         initTiming.total = (initTiming.end - initTiming.start) / 1000;
+        alert("Login success");
         console.log("Login success");
         
         initializationComplete = true;
@@ -123,11 +126,14 @@ const handleInit = async (parsed: any) => {
           );
         }
       });
-    } catch (error) {
-      console.error("Error initializing embed:", error);
     }
+  } catch (error) {
+    alert("Error initializing embed:" + error);
+    // Handle the error gracefully, e.g., show a user-friendly message
+  }
 }
-}
+
+// handleInit({});
 
 const handleTokenResponse = (parsed: any) => {
   if (tokenResolver && parsed.token) {
@@ -136,28 +142,33 @@ const handleTokenResponse = (parsed: any) => {
 };
 
 const handleEmbed = (parsed: any) => {
-  if (!currentEmbedConfig) {
-    console.log("No embedConfig in place. Did you call INIT first?");
-    return;
-  }
-  const { embedType, viewConfig } = parsed;
+  try {
+    if (!currentEmbedConfig) {
+      console.log("No embedConfig in place. Did you call INIT first?");
+      return;
+    }
+    const { embedType, viewConfig } = parsed;
 
-  if (!embedType || !viewConfig) {
-    console.log("Missing typeofEmbed or viewConfig in EMBED message.");
-    return;
-  }
+    if (!embedType || !viewConfig) {
+      console.log("Missing typeofEmbed or viewConfig in EMBED message.");
+      return;
+    }
     currentViewConfig = {
       embedType,
       viewConfig
     };
 
-  if(!initializationComplete){
-    console.log("initialization not complete yet");
-    return;
-  }
+    if(!initializationComplete){
+      console.log("initialization not complete yet");
+      return;
+    }
 
-  setupThoughtSpotEmbed(embedType, viewConfig);
-  console.log("EMBED setup complete!");
+    setupThoughtSpotEmbed(embedType, viewConfig);
+    console.log("EMBED setup complete!");
+  } catch (error) {
+    alert("Error handling embed:" + error);
+    // Handle the error gracefully
+  }
 }
 
 function requestAuthToken(): Promise<string> {
@@ -245,12 +256,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...viewConfig,
-            visibleActions: [Action.DrillDown, Action.AddFilter],
-            additionalFlags: {
-              "flipTooltipToContextMenuEnabled": "true",
-              "contextMenuEnabledOnWhichClick": "left",
-            }
+            ...validateAndMergeViewConfig(viewConfig),
         });
     } else if (typeofEmbed === "SearchEmbed") {
         embedInstance = new SearchEmbed("#ts-embed", {
@@ -289,7 +295,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
     });
 }
-
+// setupThoughtSpotEmbed("Liveboard", {});
 function cleanupStaleResponders() {
   if (eventResponders.size > 100) { 
     console.warn('High number of stored responders');
@@ -303,3 +309,9 @@ function cleanupStaleResponders() {
 //         initializeVercelShell();
 //     }
 // });
+
+// Global error handler
+window.addEventListener('error', (event) => {
+  alert('Global error caught:' + event.error);
+  // Optionally, send error details to a logging service
+});

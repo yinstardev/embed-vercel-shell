@@ -11,27 +11,23 @@ const DEFAULT_VIEW_CONFIG = {
 };
 
 export const validateAndMergeViewConfig = (viewConfig: any) => {
-  if (!viewConfig) {
-    return { ...DEFAULT_VIEW_CONFIG };
+  if(!viewConfig) {
+    return { ...DEFAULT_VIEW_CONFIG};
   }
 
-  let mergedConfig = { ...viewConfig }; 
+  let updatedConfig = viewConfig;
 
-  mergedConfig.additionalFlags = [
+  updatedConfig.additionalFlags = [
     ...DEFAULT_VIEW_CONFIG.additionalFlags,
     ...(viewConfig.additionalFlags ? viewConfig.additionalFlags : []),
-  ];
-
+  ]; 
   if (viewConfig.defaultActionsDisabled) {
-    return mergedConfig;
+    return updatedConfig;
   }
 
-  if (viewConfig.visibleActions && Array.isArray(viewConfig.visibleActions)) {
-    mergedConfig.visibleActions = [
-      ...DEFAULT_VIEW_CONFIG.visibleActions,
-      ...viewConfig.visibleActions,
-    ];
+  if(viewConfig.visibleActions && Array.isArray(viewConfig.visibleActions)) {
+    updatedConfig.visibleActions = [...DEFAULT_VIEW_CONFIG.visibleActions, ...viewConfig.visibleActions];
   }
 
-  return mergedConfig;
+  return updatedConfig;
 };

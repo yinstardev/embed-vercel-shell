@@ -1,6 +1,9 @@
 import { Action } from "@thoughtspot/visual-embed-sdk"
 
 export const validateAndMergeViewConfig = (viewConfig: any) => {
+    if(viewConfig.defaultActionsDisabled) {
+        return viewConfig;
+    }
 
     if(viewConfig.visibleActions){
         viewConfig.visibleActions = [...viewConfig.visibleActions, Action.DrillDown, Action.AddFilter];

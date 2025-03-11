@@ -258,11 +258,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...viewConfig,
-            visibleActions: [Action.DrillDown, Action.AddFilter],
-            additionalFlags: {
-              "contextMenuEnabledOnWhichClick": "left", 
-            }
+            ...validateAndMergeViewCOnfig(viewConfig),
         });
     } else if (typeofEmbed === "SearchEmbed") {
         embedInstance = new SearchEmbed("#ts-embed", {

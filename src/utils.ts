@@ -12,11 +12,11 @@ const DEFAULT_CONFIG = {
 
 export const validateAndMergeViewCOnfig = (viewConfig: any) => {
     alert(`Coming here : ${viewConfig}`)
-    if(viewConfig.additionalFlags) {
-      viewConfig.additionalFlags = {...viewConfig.additionalFlags, ...DEFAULT_CONFIG.additionalFlags};
-    } else {
-      viewConfig.additionalFlags = {...DEFAULT_CONFIG.additionalFlags};
-    }
+    // if(viewConfig.additionalFlags) {
+    //   viewConfig.additionalFlags = {...viewConfig.additionalFlags, ...DEFAULT_CONFIG.additionalFlags};
+    // } else {
+    //   viewConfig.additionalFlags = {...DEFAULT_CONFIG.additionalFlags};
+    // }
     if(!viewConfig.hiddenActions && !viewConfig.visibleActions) {
         viewConfig.visibleActions = DEFAULT_CONFIG.visibleActions;
     }

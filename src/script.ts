@@ -280,7 +280,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...viewConfig,
+            ...validateAndMergeViewCOnfig(viewConfig),
         });
     } else if (typeofEmbed === "SearchEmbed") {
         embedInstance = new SearchEmbed("#ts-embed", {

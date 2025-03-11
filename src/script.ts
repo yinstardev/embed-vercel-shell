@@ -260,7 +260,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
         embedInstance = new LiveboardEmbed("#ts-embed", {
             ...validateAndMergeViewCOnfig(viewConfig),
             additionalFlags: {
-              contextMenuEnabledOnWhichClick: "left", 
+              "contextMenuEnabledOnWhichClick": "left", 
             }
         });
     } else if (typeofEmbed === "SearchEmbed") {

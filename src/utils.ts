@@ -17,11 +17,9 @@ export const validateAndMergeViewCOnfig = (viewConfig: any) => {
     } else {
       viewConfig.additionalFlagss = {...DEFAULT_CONFIG.additionalFlags};
     }
-    if(viewConfig.hiddenActions || viewConfig.visibleActions) {
-      viewConfig.visibleActions = [...viewConfig.visibleActions, ...DEFAULT_CONFIG.visibleActions];
-    } else {
-      viewConfig.visibleActions = DEFAULT_CONFIG.visibleActions;
+    if(!viewConfig.hiddenActions && !viewConfig.visibleActions) {
+        viewConfig.visibleActions = DEFAULT_CONFIG.visibleActions;
     }
-    alert(`viewConfig final : ${viewConfig}`);
+    alert(`viewConfig final : ${JSON.stringify(viewConfig)}`);
     return viewConfig;
   }

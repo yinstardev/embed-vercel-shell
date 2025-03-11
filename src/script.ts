@@ -258,7 +258,8 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...validateAndMergeViewCOnfig(viewConfig),
+            ...viewConfig,
+            visibleActions: [Action.DrillDown, Action.AddFilter],
             additionalFlags: {
               "contextMenuEnabledOnWhichClick": "left", 
             }

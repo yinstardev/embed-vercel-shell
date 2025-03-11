@@ -268,13 +268,14 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
       if(viewConfig.additionalFlags) {
         viewConfig.additionalFlags = {...viewConfig.additionalFlags, ...DEFAULT_CONFIG.additionalFlags};
       } else {
-        viewConfig.additionalFlagss = DEFAULT_CONFIG.additionalFlags;
+        viewConfig.additionalFlagss = {...DEFAULT_CONFIG.additionalFlags};
       }
       if(viewConfig.hiddenActions || viewConfig.visibleActions) {
         viewConfig.hiddenActions = DEFAULT_CONFIG.hiddenActions;
       } else {
-        viewConfig.hiddenActions = {...viewConfig.hiddenActions, ...DEFAULT_CONFIG.hiddenActions};
+        viewConfig.hiddenActions = [...viewConfig.hiddenActions, ...DEFAULT_CONFIG.hiddenActions];
       }
+      alert(`viewConfig final : ${viewConfig}`);
       return viewConfig;
     }
     

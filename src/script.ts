@@ -8,7 +8,6 @@ import {
   EmbedConfig,
   Action,
 } from "@thoughtspot/visual-embed-sdk";
-import { validateAndMergeViewConfig } from "./utils";
 
 declare global {
   interface Window {
@@ -254,10 +253,34 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   let embedInstance: LiveboardEmbed | SearchEmbed | null = null;
     alert(viewConfig.defaultActionsDisabled);
-    alert(` This is the final config ${JSON.stringify(validateAndMergeViewConfig(viewConfig))}`);
+
+    const DEFAULT_CONFIG = {
+      hiddenActions : [
+        Action.AddFilter, Action.DrillDown
+      ],
+      additionalFlags : {
+        flipTooltipToContextMenuEnabled: "true",
+        contextMenuEnabledOnWhichClick: "left",
+      }
+    }
+
+    const validateAndMergeViewCOnfig = (viewConfig: any) => {
+      if(viewConfig.additionalFlags) {
+        viewConfig.additionalFlags = {...viewConfig.additionalFlags, ...DEFAULT_CONFIG.additionalFlags};
+      } else {
+        viewConfig.additionalFlagss = DEFAULT_CONFIG.additionalFlags;
+      }
+      if(viewConfig.hiddenActions || viewConfig.visibleActions) {
+        viewConfig.hiddenActions = DEFAULT_CONFIG.hiddenActions;
+      } else {
+        viewConfig.hiddenActions = {...viewConfig.hiddenActions, ...DEFAULT_CONFIG.hiddenActions};
+      }
+      return viewConfig;
+    }
+    
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...validateAndMergeViewConfig(viewConfig),
+            ...validateAndMergeViewCOnfig(viewConfig),
         });
     } else if (typeofEmbed === "SearchEmbed") {
         embedInstance = new SearchEmbed("#ts-embed", {

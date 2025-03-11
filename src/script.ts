@@ -8,6 +8,7 @@ import {
   EmbedConfig,
   Action,
 } from "@thoughtspot/visual-embed-sdk";
+import { validateAndMergeViewCOnfig } from "./utils";
 
 declare global {
   interface Window {
@@ -253,32 +254,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   let embedInstance: LiveboardEmbed | SearchEmbed | null = null;
     alert(viewConfig.defaultActionsDisabled);
-
-    const DEFAULT_CONFIG = {
-      visibleActions : [
-        Action.AddFilter, Action.DrillDown
-      ],
-      additionalFlags : {
-        flipTooltipToContextMenuEnabled: "true",
-        contextMenuEnabledOnWhichClick: "left",
-      }
-    }
-
-    const validateAndMergeViewCOnfig = (viewConfig: any) => {
-      alert(`Coming here : ${viewConfig}`)
-      if(viewConfig.additionalFlags) {
-        viewConfig.additionalFlags = {...viewConfig.additionalFlags, ...DEFAULT_CONFIG.additionalFlags};
-      } else {
-        viewConfig.additionalFlagss = {...DEFAULT_CONFIG.additionalFlags};
-      }
-      if(viewConfig.hiddenActions || viewConfig.visibleActions) {
-        viewConfig.visibleActions = [...viewConfig.visibleActions, ...DEFAULT_CONFIG.visibleActions];
-      } else {
-        viewConfig.visibleActions = DEFAULT_CONFIG.visibleActions;
-      }
-      alert(`viewConfig final : ${viewConfig}`);
-      return viewConfig;
-    }
+    alert(`Hello There : ${viewConfig}`)
     
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {

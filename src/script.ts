@@ -255,7 +255,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     alert(viewConfig.defaultActionsDisabled);
 
     const DEFAULT_CONFIG = {
-      hiddenActions : [
+      visibleActions : [
         Action.AddFilter, Action.DrillDown
       ],
       additionalFlags : {
@@ -265,15 +265,16 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     }
 
     const validateAndMergeViewCOnfig = (viewConfig: any) => {
+      alert(`Coming here : ${viewConfig}`)
       if(viewConfig.additionalFlags) {
         viewConfig.additionalFlags = {...viewConfig.additionalFlags, ...DEFAULT_CONFIG.additionalFlags};
       } else {
         viewConfig.additionalFlagss = {...DEFAULT_CONFIG.additionalFlags};
       }
       if(viewConfig.hiddenActions || viewConfig.visibleActions) {
-        viewConfig.hiddenActions = DEFAULT_CONFIG.hiddenActions;
+        viewConfig.visibleActions = [...viewConfig.visibleActions, ...DEFAULT_CONFIG.visibleActions];
       } else {
-        viewConfig.hiddenActions = [...viewConfig.hiddenActions, ...DEFAULT_CONFIG.hiddenActions];
+        viewConfig.visibleActions = DEFAULT_CONFIG.visibleActions;
       }
       alert(`viewConfig final : ${viewConfig}`);
       return viewConfig;

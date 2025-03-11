@@ -5,7 +5,7 @@ const DEFAULT_CONFIG = {
       Action.AddFilter, Action.DrillDown
     ],
     additionalFlags : {
-      flipTooltipToContextMenuEnabled: "true",
+    //   flipTooltipToContextMenuEnabled: "true",
       contextMenuEnabledOnWhichClick: "left",
     }
   }

@@ -24,7 +24,7 @@ declare global {
   }
 }
 export interface ExtendedEmbedConfig extends BaseEmbedConfig {
-  getTokenFromSDK?: boolean;  
+  getTokenFromSDK?: boolean;
 }
 
 interface HostEventReplyData {
@@ -68,7 +68,7 @@ const handleMessages = (parsed: any) => {
     case "HOST_EVENT":
       handleHostEvent(parsed);
       break;
-    
+
     case "EMBED_EVENT_REPLY":
       handleEmbedEvent(parsed);
       break;
@@ -81,9 +81,9 @@ const handleMessages = (parsed: any) => {
 
 const handleEmbedEvent = (parsed: any) => {
   const eventId = parsed.eventId;
-  if(eventId){
+  if (eventId) {
     const responderFn = eventResponders.get(eventId);
-    if(responderFn) {
+    if (responderFn) {
       responderFn(parsed.payload);
       eventResponders.delete(eventId);
     }
@@ -96,7 +96,7 @@ const handleInit = async (parsed: any) => {
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
-    alert(`currentEmbedConfig: ${JSON.stringify(currentEmbedConfig)}`);
+    // alert(`currentEmbedConfig: ${JSON.stringify(currentEmbedConfig)}`);
     if (currentEmbedConfig) {
       const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
 
@@ -117,12 +117,12 @@ const handleInit = async (parsed: any) => {
         initTiming.total = (initTiming.end - initTiming.start) / 1000;
         alert("Login success");
         console.log("Login success");
-        
+
         initializationComplete = true;
         if (currentViewConfig) {
           setupThoughtSpotEmbed(
-              currentViewConfig.embedType || "", 
-              currentViewConfig.viewConfig || {}
+            currentViewConfig.embedType || "",
+            currentViewConfig.viewConfig || {}
           );
         }
       });
@@ -158,7 +158,7 @@ const handleEmbed = (parsed: any) => {
       viewConfig
     };
 
-    if(!initializationComplete){
+    if (!initializationComplete) {
       console.log("initialization not complete yet");
       return;
     }
@@ -172,32 +172,32 @@ const handleEmbed = (parsed: any) => {
 }
 
 function requestAuthToken(): Promise<string> {
-    window.ReactNativeWebView?.postMessage(
-        JSON.stringify({ type: "REQUEST_AUTH_TOKEN" })
-    );
-    return new Promise((resolve) => {
-        tokenResolver = resolve;
-    });
+  window.ReactNativeWebView?.postMessage(
+    JSON.stringify({ type: "REQUEST_AUTH_TOKEN" })
+  );
+  return new Promise((resolve) => {
+    tokenResolver = resolve;
+  });
 }
 
 function initVercelShellMsg() {
-    if (isVercelShellInitialized) return;
-    const vercelShellInit = {
-        type: "INIT_VERCEL_SHELL",
-        status: "ready"
-    };
-    window.ReactNativeWebView?.postMessage(JSON.stringify(vercelShellInit));
-    isVercelShellInitialized = true;
+  if (isVercelShellInitialized) return;
+  const vercelShellInit = {
+    type: "INIT_VERCEL_SHELL",
+    status: "ready"
+  };
+  window.ReactNativeWebView?.postMessage(JSON.stringify(vercelShellInit));
+  isVercelShellInitialized = true;
 }
 
 function initializeVercelShell() {
-    initVercelShellMsg();
-    setTimeout(() => {
-        if (!isVercelShellInitialized) {
-            console.log("Retrying Vercel shell initialization...");
-            initVercelShellMsg();
-        }
-    }, 1000);
+  initVercelShellMsg();
+  setTimeout(() => {
+    if (!isVercelShellInitialized) {
+      console.log("Retrying Vercel shell initialization...");
+      initVercelShellMsg();
+    }
+  }, 1000);
 }
 
 // Call on page load
@@ -243,63 +243,63 @@ function sendHostEventReply(eventId: string | undefined, data: HostEventReplyDat
  * thoughtspot embed : liveboard or search
  */
 function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, any>) {
-    if (!isVercelShellInitialized) {
-        initializeVercelShell();
-    }
-    
-    if (currentEmbed) {
-        currentEmbed.destroy?.();
-        currentEmbed = null;
-    }
+  if (!isVercelShellInitialized) {
+    initializeVercelShell();
+  }
+
+  if (currentEmbed) {
+    currentEmbed.destroy?.();
+    currentEmbed = null;
+  }
 
   let embedInstance: LiveboardEmbed | SearchEmbed | null = null;
-    alert(viewConfig.defaultActionsDisabled);
-    alert(`Hello There : ${JSON.stringify(viewConfig)}`)
-    
-    if (typeofEmbed === "Liveboard") {
-        embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...validateAndMergeViewCOnfig(viewConfig),
-        });
-    } else if (typeofEmbed === "SearchEmbed") {
-        embedInstance = new SearchEmbed("#ts-embed", {
-            ...viewConfig,
-        });
-    } else {
-        console.warn("Unrecognized typeofEmbed:", typeofEmbed);
-        return;
-    }
+  //alert(viewConfig.defaultActionsDisabled);
+  // alert(`Hello There : ${JSON.stringify(viewConfig)}`)
+
+  if (typeofEmbed === "Liveboard") {
+    embedInstance = new LiveboardEmbed("#ts-embed", {
+      ...validateAndMergeViewCOnfig(viewConfig),
+    });
+  } else if (typeofEmbed === "SearchEmbed") {
+    embedInstance = new SearchEmbed("#ts-embed", {
+      ...viewConfig,
+    });
+  } else {
+    console.warn("Unrecognized typeofEmbed:", typeofEmbed);
+    return;
+  }
 
   embedInstance.render();
   currentEmbed = embedInstance;
 
-    currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {
-      const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
-      if(responderFn && eventId) {
-        setTimeout(() => {
-          if (eventResponders.has(eventId)) {
-            console.warn(`Responder ${eventId} timeout!!`);
-            eventResponders.delete(eventId);
-          }
-        }, RESPONDER_TIMEOUT);
+  currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {
+    const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
+    if (responderFn && eventId) {
+      setTimeout(() => {
+        if (eventResponders.has(eventId)) {
+          console.warn(`Responder ${eventId} timeout!!`);
+          eventResponders.delete(eventId);
+        }
+      }, RESPONDER_TIMEOUT);
 
-        eventResponders.set(eventId, responderFn);
-      }
+      eventResponders.set(eventId, responderFn);
+    }
 
-            window.ReactNativeWebView?.postMessage(
-                JSON.stringify({
-                    type: "EMBED_EVENT",
-                    eventId,
-                    eventName: embedEvent.type,
-                    data: embedEvent.data,
-                    hasResponder: !!responderFn
-                })
-            );
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({
+        type: "EMBED_EVENT",
+        eventId,
+        eventName: embedEvent.type,
+        data: embedEvent.data,
+        hasResponder: !!responderFn
+      })
+    );
 
-    });
+  });
 }
 // setupThoughtSpotEmbed("Liveboard", {});
 function cleanupStaleResponders() {
-  if (eventResponders.size > 100) { 
+  if (eventResponders.size > 100) {
     console.warn('High number of stored responders');
   }
 }

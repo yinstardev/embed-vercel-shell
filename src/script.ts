@@ -266,7 +266,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
       ...viewConfig,
     });
 
-  } else if (typeofEmbed == 'ConversationEmbed') {
+  } else if (typeofEmbed == 'Conversation') {
     embedInstance = new ConversationEmbed("#ts-embed", {
       ...viewConfig,
     });

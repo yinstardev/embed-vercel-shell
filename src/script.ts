@@ -7,6 +7,7 @@ import {
   AuthStatus,
   EmbedConfig,
   Action,
+  ConversationEmbed,
 } from "@thoughtspot/visual-embed-sdk";
 import { validateAndMergeViewCOnfig } from "./utils";
 
@@ -34,7 +35,7 @@ interface HostEventReplyData {
   data?: any;
 }
 
-let currentEmbed: LiveboardEmbed | SearchEmbed | null = null;
+let currentEmbed: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
 let currentEmbedConfig: ExtendedEmbedConfig | null = null;
 let tokenResolver: ((val: string) => void) | null = null;
 let initializationComplete = false;
@@ -252,7 +253,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     currentEmbed = null;
   }
 
-  let embedInstance: LiveboardEmbed | SearchEmbed | null = null;
+  let embedInstance: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
   //alert(viewConfig.defaultActionsDisabled);
   // alert(`Hello There : ${JSON.stringify(viewConfig)}`)
 
@@ -262,6 +263,11 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     });
   } else if (typeofEmbed === "SearchEmbed") {
     embedInstance = new SearchEmbed("#ts-embed", {
+      ...viewConfig,
+    });
+
+  } else if (typeofEmbed == 'ConversationEmbed') {
+    embedInstance = new ConversationEmbed("#ts-embed", {
       ...viewConfig,
     });
   } else {

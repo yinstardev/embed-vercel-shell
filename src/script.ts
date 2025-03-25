@@ -269,7 +269,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     });
 
   } else if (typeofEmbed == 'Conversation') {
-    const embedContainer = document.getElementById('#ts-embed');
+    const embedContainer = document.getElementById('ts-embed');
     if (embedContainer) {
       embedInstance = new ConversationEmbed(embedContainer, {
         ...newViewConfig,

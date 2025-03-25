@@ -154,7 +154,6 @@ const handleEmbed = (parsed: any) => {
       console.log("Missing typeofEmbed or viewConfig in EMBED message.");
       return;
     }
-    alert(`Alert embedType : , ${embedType}`);
     currentViewConfig = {
       embedType,
       viewConfig

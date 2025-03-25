@@ -98,6 +98,7 @@ const handleInit = async (parsed: any) => {
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
+
     // alert(`currentEmbedConfig: ${ JSON.stringify(currentEmbedConfig) }`);
     if (currentEmbedConfig) {
       const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
@@ -257,7 +258,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   let embedInstance: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
   //alert(viewConfig.defaultActionsDisabled);
   // alert(`Hello There : ${ JSON.stringify(viewConfig) }`)
-
+  const { worksheetId, ...newViewConfig } = viewConfig;
   if (typeofEmbed === "Liveboard") {
     embedInstance = new LiveboardEmbed("#ts-embed", {
       ...validateAndMergeViewCOnfig(viewConfig),
@@ -269,7 +270,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   } else if (typeofEmbed == 'Conversation') {
     embedInstance = new ConversationEmbed("#ts-embed", {
-      ...viewConfig,
+      ...newViewConfig,
     });
   } else {
     console.warn("Unrecognized typeofEmbed:", typeofEmbed);
@@ -305,7 +306,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   });
 }
-// setupThoughtSpotEmbed("Liveboard", {});
+// setupThoughtSpotEmbed("Conversation", {});
 function cleanupStaleResponders() {
   if (eventResponders.size > 100) {
     console.warn('High number of stored responders');

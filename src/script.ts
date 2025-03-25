@@ -269,20 +269,23 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     });
 
   } else if (typeofEmbed == 'Conversation') {
-    embedInstance = new ConversationEmbed("#ts-embed", {
-      ...newViewConfig,
-      worksheetId: "9a527010-0a08-4b54-9700-e6da0a82a084",
-    });
+    const embedContainer = document.getElementById('#ts-embed');
+    if (embedContainer) {
+      embedInstance = new ConversationEmbed(embedContainer, {
+        ...newViewConfig,
+        worksheetId: "9a527010-0a08-4b54-9700-e6da0a82a084",
+      })
+    }
   } else {
     console.warn("Unrecognized typeofEmbed:", typeofEmbed);
     return;
   }
 
-  embedInstance.render();
-  alert(` This is iframe SRC : ${embedInstance.getIframeSrc()} `);
+  embedInstance?.render();
+  alert(` This is iframe SRC : ${embedInstance?.getIframeSrc()} `);
   currentEmbed = embedInstance;
 
-  currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {
+  currentEmbed?.on("*" as any, (embedEvent: any, responderFn?: Function) => {
     const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
     if (responderFn && eventId) {
       setTimeout(() => {

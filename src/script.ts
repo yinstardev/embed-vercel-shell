@@ -49,7 +49,7 @@ const RESPONDER_TIMEOUT = 30000;
 window.addEventListener("message", (event: any) => {
   let parsed: any;
   parsed = event.data as any;
-  alert(`parsed data: ${JSON.parse(parsed)}`);
+  alert(`parsed data: ${JSON.stringify(parsed)}`);
   handleMessages(parsed);
 });
 

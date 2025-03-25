@@ -271,6 +271,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   } else if (typeofEmbed == 'Conversation') {
     embedInstance = new ConversationEmbed("#ts-embed", {
       ...newViewConfig,
+      worksheetId: "9a527010-0a08-4b54-9700-e6da0a82a084",
     });
   } else {
     console.warn("Unrecognized typeofEmbed:", typeofEmbed);

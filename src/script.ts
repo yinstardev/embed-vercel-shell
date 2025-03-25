@@ -49,6 +49,7 @@ const RESPONDER_TIMEOUT = 30000;
 window.addEventListener("message", (event: any) => {
   let parsed: any;
   parsed = event.data as any;
+  alert(`parsed data: ${parsed}`);
   handleMessages(parsed);
 });
 
@@ -97,7 +98,7 @@ const handleInit = async (parsed: any) => {
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
-    // alert(`currentEmbedConfig: ${JSON.stringify(currentEmbedConfig)}`);
+    // alert(`currentEmbedConfig: ${ JSON.stringify(currentEmbedConfig) }`);
     if (currentEmbedConfig) {
       const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
 
@@ -255,7 +256,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   let embedInstance: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
   //alert(viewConfig.defaultActionsDisabled);
-  // alert(`Hello There : ${JSON.stringify(viewConfig)}`)
+  // alert(`Hello There : ${ JSON.stringify(viewConfig) }`)
 
   if (typeofEmbed === "Liveboard") {
     embedInstance = new LiveboardEmbed("#ts-embed", {

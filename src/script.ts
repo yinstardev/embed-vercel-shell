@@ -277,6 +277,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   }
 
   embedInstance.render();
+  alert(` This is iframe SRC : ${embedInstance.getIframeSrc()} `);
   currentEmbed = embedInstance;
 
   currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {

@@ -282,6 +282,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   }
 
   embedInstance?.render();
+  alert(`URL : ${embedInstance?.getIframeSrc()}`);
   alert(` This is iframe SRC : ${embedInstance?.getIframeSrc()} `);
   currentEmbed = embedInstance;
 

@@ -3,19 +3,20 @@ import { Action } from "@thoughtspot/visual-embed-sdk";
 const DEFAULT_CONFIG = {
     visibleActions: [Action.AddFilter, Action.DrillDown],
     additionalFlags: {
-      "contextMenuEnabledOnWhichClick": "left",
+        "contextMenuEnabledOnWhichClick": "left",
+        "isMobileResponsiveLiveboardEnabled": "true"
     },
-  };
+};
 
 export const validateAndMergeViewCOnfig = (viewConfig: any) => {
     viewConfig.additionalFlags = {
         ...DEFAULT_CONFIG.additionalFlags,
         ...(viewConfig.additionalFlags || {}),
-      };
-    
-      if (!viewConfig.hiddenActions && !viewConfig.visibleActions) {
+    };
+
+    if (!viewConfig.hiddenActions && !viewConfig.visibleActions) {
         viewConfig.visibleActions = DEFAULT_CONFIG.visibleActions;
-      } 
+    }
     alert(`viewConfig final : ${JSON.stringify(viewConfig)}`);
     return viewConfig;
-  }
+}

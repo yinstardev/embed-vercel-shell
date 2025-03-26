@@ -4,7 +4,7 @@ const DEFAULT_CONFIG = {
     visibleActions: [Action.AddFilter, Action.DrillDown],
     additionalFlags: {
         "contextMenuEnabledOnWhichClick": "left",
-        "isMobileResponsiveLiveboardEnabled": "true"
+        "isMobileResponsiveLiveboardEnabled": true
     },
 };
 

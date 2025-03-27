@@ -52,7 +52,7 @@ window.addEventListener('click', (event) => {
   console.log("Event here : ", event);
 })
 
-window.addEventListener('contextmenu', (event) => {
+window.addEventListener('touchstart', (event) => {
   alert(`event for contextmenu : ${event}`);
 })
 

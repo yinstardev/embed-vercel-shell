@@ -53,6 +53,18 @@ window.addEventListener('click', (event) => {
 })
 
 window.addEventListener('touchstart', (event) => {
+  alert(`event for touchstart : ${event}`);
+})
+window.addEventListener('pointerdown', (event) => {
+  alert(`event for pointerdown : ${event}`);
+})
+window.addEventListener('mousedown', (event) => {
+  alert(`event for mousedown : ${event}`);
+})
+window.addEventListener('keydown', (event) => {
+  alert(`event for keydown : ${event}`);
+})
+window.addEventListener('contextmenu', (event) => {
   alert(`event for contextmenu : ${event}`);
 })
 

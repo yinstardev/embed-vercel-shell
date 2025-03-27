@@ -51,6 +51,11 @@ window.addEventListener('click', (event) => {
   alert(`event for click : ${event.CAPTURING_PHASE}`); 
   console.log("Event here : ", event);
 })
+
+window.addEventListener('contextmenu', (event) => {
+  alert(`event for contextmenu : ${event}`);
+})
+
 window.addEventListener("message", (event: any) => {
   let parsed: any;
   parsed = event.data as any;

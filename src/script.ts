@@ -93,10 +93,10 @@ const handleEmbedEvent = (parsed: any) => {
 
 const handleInit = async (parsed: any) => {
   try {
-    currentEmbedConfig = parsed || null;
-    // if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
-    //   currentEmbedConfig.getAuthToken = async () => requestAuthToken();
-    // }
+    currentEmbedConfig = parsed.payload || null;
+    if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
+      currentEmbedConfig.getAuthToken = async () => requestAuthToken();
+    }
 
     if (currentEmbedConfig) {
       const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
@@ -134,10 +134,7 @@ const handleInit = async (parsed: any) => {
   }
 }
 
-handleInit({
-  thoughtSpotHost: 'https://champagne-master-aws.thoughtspotstaging.cloud',
-  authType: "None"
-});
+// handleInit({});
 
 const handleTokenResponse = (parsed: any) => {
   if (tokenResolver && parsed.token) {
@@ -269,11 +266,11 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   } else if (typeofEmbed == 'Conversation') {
     const embedContainer = document.getElementById('ts-embed');
-    // alert(`WorksheetId : ${worksheetId}`);
+    alert(`WorksheetId : ${worksheetId}`);
     if (embedContainer) {
       embedInstance = new ConversationEmbed(embedContainer, {
         ...newViewConfig,
-        worksheetId,
+        worksheetId: "9a527010-0a08-4b54-9700-e6da0a82a084",
       })
     }
   } else {
@@ -310,13 +307,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   });
 }
-setupThoughtSpotEmbed("Conversation", {
-  worksheetId: '3e1ae47d-ab2b-46ff-887c-5456a825b500',
-  frameParams:{
-      height: '100%',
-      width: '100%'
-    }
-});
+// setupThoughtSpotEmbed("Conversation", {});
 function cleanupStaleResponders() {
   if (eventResponders.size > 100) {
     console.warn('High number of stored responders');

@@ -8,7 +8,7 @@ import {
   EmbedConfig,
   Action,
 } from "@thoughtspot/visual-embed-sdk";
-import { ConversationEmbed } from "@thoughtspot/visual-embed-sdk/react";
+import { ConversationEmbed } from "@thoughtspot/visual-embed-sdk";
 import { validateAndMergeViewCOnfig } from "./utils";
 
 declare global {

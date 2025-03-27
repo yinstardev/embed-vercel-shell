@@ -91,12 +91,7 @@
       
       if (!metaTag.parentNode) {
         document.head.appendChild(metaTag);
-      }
-
-      window.addEventListener('click', (event) => {
-        alert(`event for click : ${event}`);
-        alert(`event for click : ${event.data}`); 
-      })
+      }   
 
       window.addEventListener('resize', function() {
         const newScreenWidth = window.innerWidth;

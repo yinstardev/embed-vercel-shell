@@ -93,10 +93,10 @@ const handleEmbedEvent = (parsed: any) => {
 
 const handleInit = async (parsed: any) => {
   try {
-    currentEmbedConfig = parsed.payload || null;
-    if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
-      currentEmbedConfig.getAuthToken = async () => requestAuthToken();
-    }
+    currentEmbedConfig = parsed || null;
+    // if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
+    //   currentEmbedConfig.getAuthToken = async () => requestAuthToken();
+    // }
 
     if (currentEmbedConfig) {
       const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
@@ -134,7 +134,10 @@ const handleInit = async (parsed: any) => {
   }
 }
 
-// handleInit({});
+handleInit({
+  thoughtSpotHost: 'https://champagne-master-aws.thoughtspotstaging.cloud',
+  authType: "None"
+});
 
 const handleTokenResponse = (parsed: any) => {
   if (tokenResolver && parsed.token) {
@@ -307,7 +310,13 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   });
 }
-// setupThoughtSpotEmbed("Conversation", {});
+setupThoughtSpotEmbed("Conversation", {
+  worksheetId: '3e1ae47d-ab2b-46ff-887c-5456a825b500',
+  frameParams:{
+      height: '100%',
+      width: '100%'
+    }
+});
 function cleanupStaleResponders() {
   if (eventResponders.size > 100) {
     console.warn('High number of stored responders');

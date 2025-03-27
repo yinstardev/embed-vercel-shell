@@ -268,7 +268,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     const embedContainer = document.getElementById('ts-embed');
     alert(`WorksheetId : ${worksheetId}`);
     if (embedContainer) {
-      embedInstance = new ConversationEmbed("#ts-embed", {
+      embedInstance = new ConversationEmbed(embedContainer, {
         ...newViewConfig,
         worksheetId: "9a527010-0a08-4b54-9700-e6da0a82a084",
       })

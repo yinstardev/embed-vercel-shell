@@ -7,8 +7,8 @@ import {
   AuthStatus,
   EmbedConfig,
   Action,
-  ConversationEmbed,
 } from "@thoughtspot/visual-embed-sdk";
+import { ConversationEmbed } from "@thoughtspot/visual-embed-sdk/react";
 import { validateAndMergeViewCOnfig } from "./utils";
 
 declare global {
@@ -35,7 +35,7 @@ interface HostEventReplyData {
   data?: any;
 }
 
-let currentEmbed: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
+let currentEmbed: LiveboardEmbed | SearchEmbed | typeof ConversationEmbed | null = null;
 let currentEmbedConfig: ExtendedEmbedConfig | null = null;
 let tokenResolver: ((val: string) => void) | null = null;
 let initializationComplete = false;
@@ -253,7 +253,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     currentEmbed = null;
   }
 
-  let embedInstance: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
+  let embedInstance: LiveboardEmbed | SearchEmbed | typeof ConversationEmbed | null = null;
   const { worksheetId, ...newViewConfig } = viewConfig;
   if (typeofEmbed === "Liveboard") {
     embedInstance = new LiveboardEmbed("#ts-embed", {
@@ -268,7 +268,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     const embedContainer = document.getElementById('ts-embed');
     alert(`WorksheetId : ${worksheetId}`);
     if (embedContainer) {
-      embedInstance = new ConversationEmbed(embedContainer, {
+      embedInstance = new ConversationEmbed("#ts-embed", {
         ...newViewConfig,
         worksheetId: "9a527010-0a08-4b54-9700-e6da0a82a084",
       })

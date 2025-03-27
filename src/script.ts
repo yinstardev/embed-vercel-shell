@@ -35,7 +35,7 @@ interface HostEventReplyData {
   data?: any;
 }
 
-let currentEmbed: LiveboardEmbed | SearchEmbed | typeof ConversationEmbed | null = null;
+let currentEmbed: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
 let currentEmbedConfig: ExtendedEmbedConfig | null = null;
 let tokenResolver: ((val: string) => void) | null = null;
 let initializationComplete = false;
@@ -253,7 +253,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
     currentEmbed = null;
   }
 
-  let embedInstance: LiveboardEmbed | SearchEmbed | typeof ConversationEmbed | null = null;
+  let embedInstance: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
   const { worksheetId, ...newViewConfig } = viewConfig;
   if (typeofEmbed === "Liveboard") {
     embedInstance = new LiveboardEmbed("#ts-embed", {

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.725, user-scalable=no, maximum-scale=0.725">
+    <meta name="viewport" content="width=device-width, initial-scale=0.725, user-scalable=yes, maximum-scale=0.725">
     <title>Embed Shell</title>
     <style>
       html {
@@ -87,7 +87,7 @@
   
       const metaTag = document.querySelector("meta[name='viewport']") || document.createElement("meta");
       metaTag.name = "viewport";
-      metaTag.content = `width=device-width, initial-scale=${scale}, maximum-scale=${scale}, user-scalable=no`;
+      metaTag.content = `width=device-width, initial-scale=${scale}, maximum-scale=${scale}, user-scalable=yes`;
       
       if (!metaTag.parentNode) {
         document.head.appendChild(metaTag);
@@ -106,8 +106,8 @@
           }
         }
         const currentScale = scale;
-        if (metaTag.content !== `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`) {
-          metaTag.content = `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`;
+        if (metaTag.content !== `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=yes`) {
+          metaTag.content = `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=yes`;
         }
       });
 

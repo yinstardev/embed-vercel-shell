@@ -46,32 +46,9 @@ const eventResponders = new Map<string, Function>();
 
 const RESPONDER_TIMEOUT = 30000;
 
-window.addEventListener('click', (event) => {
-  alert(`event for click : ${event}`);
-  alert(`event for click : ${event.CAPTURING_PHASE}`); 
-  console.log("Event here : ", event);
-})
-
-window.addEventListener('touchstart', (event) => {
-  alert(`event for touchstart : ${event}`);
-})
-window.addEventListener('pointerdown', (event) => {
-  alert(`event for pointerdown : ${event}`);
-})
-window.addEventListener('mousedown', (event) => {
-  alert(`event for mousedown : ${event}`);
-})
-window.addEventListener('keydown', (event) => {
-  alert(`event for keydown : ${event}`);
-})
-window.addEventListener('contextmenu', (event) => {
-  alert(`event for contextmenu : ${event}`);
-})
-
 window.addEventListener("message", (event: any) => {
   let parsed: any;
   parsed = event.data as any;
-  alert(`parsed : ${JSON.stringify(parsed)}`);
   handleMessages(parsed);
 });
 
@@ -289,7 +266,6 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
   } else if (typeofEmbed == 'Conversation') {
     const embedContainer = document.getElementById('ts-embed');
-    alert(`WorksheetId : ${worksheetId}`);
     if (embedContainer) {
       embedInstance = new ConversationEmbed(embedContainer, {
         ...newViewConfig,

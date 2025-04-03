@@ -71,6 +71,7 @@ window.addEventListener('contextmenu', (event) => {
 window.addEventListener("message", (event: any) => {
   let parsed: any;
   parsed = event.data as any;
+  alert(`parsed : ${JSON.stringify(parsed)}`);
   handleMessages(parsed);
 });
 

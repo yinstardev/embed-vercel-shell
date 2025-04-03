@@ -2,7 +2,10 @@ import { Action } from "@thoughtspot/visual-embed-sdk";
 
 const DEFAULT_CONFIG = {
     fullHeight: true,
-    visibleActions: [Action.AddFilter, Action.DrillDown],
+    visibleActions: [Action.AddFilter,Action.CrossFilter, Action.DrillDown, Action.PersonalisedViewsDropdown, Action.AxisMenuFilter, Action.AxisMenuEdit, Action.AxisMenuPosition, 
+        Action.AxisMenuSort, Action.AxisMenuAggregate, Action.AxisMenuConditionalFormat, Action.AxisMenuGroup, Action.AxisMenuRemove,
+        Action.AxisMenuRename, Action.AxisMenuTimeBucket
+    ],
     additionalFlags: {
         "contextMenuEnabledOnWhichClick": "left",
         "isMobileResponsiveLiveboardEnabled": true

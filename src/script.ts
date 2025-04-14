@@ -94,6 +94,7 @@ const handleEmbedEvent = (parsed: any) => {
 const handleInit = async (parsed: any) => {
   try {
     currentEmbedConfig = parsed.payload || null;
+    alert(`currentEmbedConfig : ${JSON.stringify(currentEmbedConfig)}`);
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }

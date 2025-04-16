@@ -109,28 +109,22 @@
       //   }
       // }, { passive: true });
 
-      document.addEventListener('touchend', function (e) {
-        const target = e.target;
+      ['touchend', 'touchstart'].forEach(eventType => {
+        document.addEventListener(eventType, function (e) {
+          const target = e.target;
+          if (target) {
+            ['mousedown', 'mouseup', 'click'].forEach(type => {
+              const evt = new MouseEvent(type, {
+                bubbles: true,
+                cancelable: true,
+                view: window,
+              });
+              target.dispatchEvent(evt);
+            });
+          }
+        }, { passive: true });
+      });
 
-        if (target && typeof target.click === 'function') {
-          // First click
-          target.dispatchEvent(new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          }));
-
-          // Slight delay before second click to mimic real double-click
-          setTimeout(() => {
-            target.dispatchEvent(new MouseEvent('click', {
-              bubbles: true,
-              cancelable: true,
-              view: window,
-              detail: 2, // some handlers check for detail === 2
-            }));
-          }, 150); // 100–200ms is typical double-click delay
-        }
-      }, { passive: true });
 
 
 

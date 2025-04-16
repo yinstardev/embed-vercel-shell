@@ -29,7 +29,7 @@
       }
 
       #ts-embed {
-        background-color: red;
+        background-color: rgb(0, 255, 234);
         height: 100vh;
         width: 100%;
         position: fixed;
@@ -109,25 +109,21 @@
       //   }
       // }, { passive: true });
 
-      document.addEventListener('touchstart', (e) => {
-        const target = e.target;
+      ['touchstart', 'touchend'].forEach(eventType => {
+        document.addEventListener(eventType, function () {
+          const body = document.body;
+          if (eventType === 'touchstart') {
+            body.style.backgroundColor = '#ffeeba'; // light yellow
+          } else {
+            body.style.backgroundColor = '#c3e6cb'; // light green
+          }
 
-        if (target && typeof target.click === 'function') {
-          // simulate a quick click right away
-          target.click();
-
-          // optional: dispatch native click event too
-          const evt = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-          });
-          target.dispatchEvent(evt);
-        }
-
-        // cancel default touch behavior so long press doesn't trigger hover/context menu
-        e.preventDefault();
-      }, { passive: false });  // passive: false allows us to call e.preventDefault()
+          // Reset after a short delay
+          setTimeout(() => {
+            body.style.backgroundColor = '';
+          }, 300);
+        }, { passive: true });
+      });
 
 
       window.addEventListener('resize', function() {
@@ -152,6 +148,7 @@
   </script>
   <body>
         <div id="ts-embed"></div>
+        <div style="background-color: red; width: 100%; height: 10%;">SODA</div>
         <!-- <script src="https://cdn.jsdelivr.net/npm/@thoughtspot/visual-embed-sdk/dist/tsembed.min.js" type="module"></script> -->
         <script type="module" src="/src/script.ts"></script>
   </body>

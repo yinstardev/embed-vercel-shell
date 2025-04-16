@@ -99,15 +99,15 @@
       //   }
       // }, { passive: true });
 
-      document.addEventListener('touchstart', function (e) {
-        const target = e.target;
-        if (typeof target.click === 'function') {
-          target.click();
-          setTimeout(() => {
-            target.click(); // second click after a short delay
-          }, 100);
-        }
-      }, { passive: true });
+      // document.addEventListener('touchstart', function (e) {
+      //   const target = e.target;
+      //   if (typeof target.click === 'function') {
+      //     target.click();
+      //     setTimeout(() => {
+      //       target.click(); // second click after a short delay
+      //     }, 100);
+      //   }
+      // }, { passive: true });
 
 
       window.addEventListener('resize', function() {

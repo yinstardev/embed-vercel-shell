@@ -49,7 +49,6 @@ const RESPONDER_TIMEOUT = 30000;
 window.addEventListener("message", (event: any) => {
   let parsed: any;
   parsed = event.data as any;
-  alert(`parsed : ${JSON.stringify(parsed)}`);
   handleMessages(parsed);
 });
 
@@ -95,8 +94,7 @@ const handleEmbedEvent = (parsed: any) => {
 const handleInit = async (parsed: any) => {
   try {
     currentEmbedConfig = parsed.payload || null;
-    alert(`currentEmbedConfig : ${JSON.stringify(currentEmbedConfig)}`);
-    if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
+     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
 
@@ -280,7 +278,6 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   }
 
   embedInstance?.render();
-  alert(` This is iframe SRC : ${JSON.stringify(embedInstance)} `);
   currentEmbed = embedInstance;
 
   currentEmbed?.on("*" as any, (embedEvent: any, responderFn?: Function) => {

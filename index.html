@@ -92,12 +92,23 @@
       if (!metaTag.parentNode) {
         document.head.appendChild(metaTag);
       }
-      document.addEventListener('touchstart', function(e) {
-      const target = e.target;
-        if (target && typeof target.click === 'function') {
-          target.click(); // simulates a second tap
+      // document.addEventListener('touchstart', function(e) {
+      // const target = e.target;
+      //   if (target && typeof target.click === 'function') {
+      //     target.click(); // simulates a second tap
+      //   }
+      // }, { passive: true });
+
+      document.addEventListener('touchstart', function (e) {
+        const target = e.target;
+        if (typeof target.click === 'function') {
+          target.click();
+          setTimeout(() => {
+            target.click(); // second click after a short delay
+          }, 100);
         }
       }, { passive: true });
+
 
       window.addEventListener('resize', function() {
         const newScreenWidth = window.innerWidth;

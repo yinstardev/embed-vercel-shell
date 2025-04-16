@@ -29,8 +29,8 @@
       }
 
       #ts-embed {
-        background-color: rgb(0, 255, 234);
-        height: 100vh;
+        background-color: rgb(195, 0, 255);
+        height: 80vh;
         width: 100%;
         position: fixed;
         top: 0;
@@ -99,15 +99,15 @@
       //   }
       // }, { passive: true });
 
-      // document.addEventListener('touchstart', function (e) {
-      //   const target = e.target;
-      //   if (typeof target.click === 'function') {
-      //     target.click();
-      //     setTimeout(() => {
-      //       target.click(); // second click after a short delay
-      //     }, 100);
-      //   }
-      // }, { passive: true });
+      document.addEventListener('touchstart', function (e) {
+        const target = e.target;
+        if (typeof target.click === 'function') {
+          target.click();
+          setTimeout(() => {
+            target.click(); // second click after a short delay
+          }, 100);
+        }
+      }, { passive: true });
 
       ['touchstart', 'touchend'].forEach(eventType => {
         document.addEventListener(eventType, function () {

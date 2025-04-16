@@ -109,23 +109,18 @@
       //   }
       // }, { passive: true });
 
-      ['touchend', 'touchstart'].forEach(eventType => {
-        document.addEventListener(eventType, function (e) {
-          const target = e.target;
-          if (target) {
-            ['mousedown', 'mouseup', 'click'].forEach(type => {
-              const evt = new MouseEvent(type, {
-                bubbles: true,
-                cancelable: true,
-                view: window,
-              });
-              target.dispatchEvent(evt);
-            });
-          }
-        }, { passive: true });
+      const iframe = document.querySelector('iframe');
+      const rect = iframe.getBoundingClientRect();
+      const x = rect.left + 100;
+      const y = rect.top + 200;
+      const event = new MouseEvent('click', {
+        clientX: x,
+        clientY: y,
+        bubbles: true,
+        cancelable: true,
+        view: window
       });
-
-
+      document.elementFromPoint(x, y).dispatchEvent(event);
 
 
       window.addEventListener('resize', function() {

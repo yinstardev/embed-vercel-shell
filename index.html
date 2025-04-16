@@ -91,7 +91,13 @@
       
       if (!metaTag.parentNode) {
         document.head.appendChild(metaTag);
-      }   
+      }
+      document.addEventListener('touchstart', function(e) {
+      const target = e.target;
+        if (target && typeof target.click === 'function') {
+          target.click(); // simulates a second tap
+        }
+      }, { passive: true });
 
       window.addEventListener('resize', function() {
         const newScreenWidth = window.innerWidth;

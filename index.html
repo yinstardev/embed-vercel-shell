@@ -109,18 +109,25 @@
       //   }
       // }, { passive: true });
 
-      const iframe = document.querySelector('iframe');
-      const rect = iframe.getBoundingClientRect();
-      const x = rect.left + 100;
-      const y = rect.top + 200;
-      const event = new MouseEvent('click', {
-        clientX: x,
-        clientY: y,
-        bubbles: true,
-        cancelable: true,
-        view: window
-      });
-      document.elementFromPoint(x, y).dispatchEvent(event);
+      document.addEventListener('touchstart', (e) => {
+        const target = e.target;
+
+        if (target && typeof target.click === 'function') {
+          // simulate a quick click right away
+          target.click();
+
+          // optional: dispatch native click event too
+          const evt = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          });
+          target.dispatchEvent(evt);
+        }
+
+        // cancel default touch behavior so long press doesn't trigger hover/context menu
+        e.preventDefault();
+      }, { passive: false });  // passive: false allows us to call e.preventDefault()
 
 
       window.addEventListener('resize', function() {

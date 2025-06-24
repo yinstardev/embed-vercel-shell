@@ -6,10 +6,8 @@ import {
   EmbedConfig as BaseEmbedConfig,
   AuthStatus,
   EmbedConfig,
-  Action,
 } from "@thoughtspot/visual-embed-sdk";
-import { ConversationEmbed } from "@thoughtspot/visual-embed-sdk";
-import { validateAndMergeViewCOnfig } from "./utils";
+import { validateAndMergeViewConfig } from "./utils";
 
 declare global {
   interface Window {
@@ -25,7 +23,7 @@ declare global {
   }
 }
 export interface ExtendedEmbedConfig extends BaseEmbedConfig {
-  getTokenFromSDK?: boolean;
+  getTokenFromSDK?: boolean;  
 }
 
 interface HostEventReplyData {
@@ -35,7 +33,7 @@ interface HostEventReplyData {
   data?: any;
 }
 
-let currentEmbed: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
+let currentEmbed: LiveboardEmbed | SearchEmbed | null = null;
 let currentEmbedConfig: ExtendedEmbedConfig | null = null;
 let tokenResolver: ((val: string) => void) | null = null;
 let initializationComplete = false;
@@ -69,7 +67,7 @@ const handleMessages = (parsed: any) => {
     case "HOST_EVENT":
       handleHostEvent(parsed);
       break;
-
+    
     case "EMBED_EVENT_REPLY":
       handleEmbedEvent(parsed);
       break;
@@ -82,9 +80,9 @@ const handleMessages = (parsed: any) => {
 
 const handleEmbedEvent = (parsed: any) => {
   const eventId = parsed.eventId;
-  if (eventId) {
+  if(eventId){
     const responderFn = eventResponders.get(eventId);
-    if (responderFn) {
+    if(responderFn) {
       responderFn(parsed.payload);
       eventResponders.delete(eventId);
     }
@@ -92,49 +90,43 @@ const handleEmbedEvent = (parsed: any) => {
 }
 
 const handleInit = async (parsed: any) => {
-  try {
+
     currentEmbedConfig = parsed.payload || null;
-     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
+    if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
-
-    if (currentEmbedConfig) {
-      const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
+     if (currentEmbedConfig) {
+      try {
+        const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
 
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
-        alert("Success: TrustedAuthTokenCookieless");
-        console.log("Success: TrustedAuthTokenCookieless");
+        console.info("Success: TrustedAuthTokenCookieless");
       });
 
       authEventEmitter.on(AuthStatus.FAILURE, (error) => {
-        alert(`Auth fail ${error}`);
-        console.log(`Auth fail ${error}`);
+        console.info(`Auth fail ${error}`);
         initializationComplete = false;
       });
 
       authEventEmitter.on(AuthStatus.SDK_SUCCESS, () => {
         initTiming.end = Date.now();
         initTiming.total = (initTiming.end - initTiming.start) / 1000;
-        alert("Login success");
-        console.log("Login success");
-
+        console.info("Login success");
+        
         initializationComplete = true;
         if (currentViewConfig) {
           setupThoughtSpotEmbed(
-            currentViewConfig.embedType || "",
-            currentViewConfig.viewConfig || {}
+              currentViewConfig.embedType || "", 
+              currentViewConfig.viewConfig || {}
           );
         }
       });
+    } catch (error) {
+      console.error("Error initializing embed:", error);
     }
-  } catch (error) {
-    alert("Error initializing embed:" + error);
-    // Handle the error gracefully, e.g., show a user-friendly message
-  }
 }
-
-// handleInit({});
+}
 
 const handleTokenResponse = (parsed: any) => {
   if (tokenResolver && parsed.token) {
@@ -143,62 +135,57 @@ const handleTokenResponse = (parsed: any) => {
 };
 
 const handleEmbed = (parsed: any) => {
-  try {
-    if (!currentEmbedConfig) {
-      console.log("No embedConfig in place. Did you call INIT first?");
-      return;
-    }
-    const { embedType, viewConfig } = parsed;
+  if (!currentEmbedConfig) {
+    console.info("No embedConfig in place. Did you call INIT first?");
+    return;
+  }
+  const { embedType, viewConfig } = parsed;
 
-    if (!embedType || !viewConfig) {
-      console.log("Missing typeofEmbed or viewConfig in EMBED message.");
-      return;
-    }
+  if (!embedType || !viewConfig) {
+    console.error("Missing typeofEmbed or viewConfig in EMBED message.");
+    return;
+  }
     currentViewConfig = {
       embedType,
       viewConfig
     };
 
-    if (!initializationComplete) {
-      console.log("initialization not complete yet");
-      return;
-    }
-
-    setupThoughtSpotEmbed(embedType, viewConfig);
-    console.log("EMBED setup complete!");
-  } catch (error) {
-    alert("Error handling embed:" + error);
-    // Handle the error gracefully
+  if(!initializationComplete){
+    console.warn("initialization not complete yet");
+    return;
   }
+
+  setupThoughtSpotEmbed(embedType, viewConfig);
+  console.info("EMBED setup complete!");
 }
 
 function requestAuthToken(): Promise<string> {
-  window.ReactNativeWebView?.postMessage(
-    JSON.stringify({ type: "REQUEST_AUTH_TOKEN" })
-  );
-  return new Promise((resolve) => {
-    tokenResolver = resolve;
-  });
+    window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "REQUEST_AUTH_TOKEN" })
+    );
+    return new Promise((resolve) => {
+        tokenResolver = resolve;
+    });
 }
 
 function initVercelShellMsg() {
-  if (isVercelShellInitialized) return;
-  const vercelShellInit = {
-    type: "INIT_VERCEL_SHELL",
-    status: "ready"
-  };
-  window.ReactNativeWebView?.postMessage(JSON.stringify(vercelShellInit));
-  isVercelShellInitialized = true;
+    if (isVercelShellInitialized) return;
+    const vercelShellInit = {
+        type: "INIT_VERCEL_SHELL",
+        status: "ready"
+    };
+    window.ReactNativeWebView?.postMessage(JSON.stringify(vercelShellInit));
+    isVercelShellInitialized = true;
 }
 
 function initializeVercelShell() {
-  initVercelShellMsg();
-  setTimeout(() => {
-    if (!isVercelShellInitialized) {
-      console.log("Retrying Vercel shell initialization...");
-      initVercelShellMsg();
-    }
-  }, 1000);
+    initVercelShellMsg();
+    setTimeout(() => {
+        if (!isVercelShellInitialized) {
+            console.info("Retrying Vercel shell initialization...");
+            initVercelShellMsg();
+        }
+    }, 1000);
 }
 
 // Call on page load
@@ -244,84 +231,61 @@ function sendHostEventReply(eventId: string | undefined, data: HostEventReplyDat
  * thoughtspot embed : liveboard or search
  */
 function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, any>) {
-  if (!isVercelShellInitialized) {
-    initializeVercelShell();
-  }
-
-  if (currentEmbed) {
-    currentEmbed.destroy?.();
-    currentEmbed = null;
-  }
-
-  let embedInstance: LiveboardEmbed | SearchEmbed | ConversationEmbed | null = null;
-  const { worksheetId, ...newViewConfig } = viewConfig;
-  if (typeofEmbed === "Liveboard") {
-    embedInstance = new LiveboardEmbed("#ts-embed", {
-      ...validateAndMergeViewCOnfig(viewConfig),
-    });
-  } else if (typeofEmbed === "SearchEmbed") {
-    embedInstance = new SearchEmbed("#ts-embed", {
-      ...viewConfig,
-    });
-
-  } else if (typeofEmbed == 'Conversation') {
-    const embedContainer = document.getElementById('ts-embed');
-    if (embedContainer) {
-      embedInstance = new ConversationEmbed(embedContainer, {
-        ...newViewConfig,
-        worksheetId: "9a527010-0a08-4b54-9700-e6da0a82a084",
-      })
+    if (!isVercelShellInitialized) {
+        initializeVercelShell();
     }
-  } else {
-    console.warn("Unrecognized typeofEmbed:", typeofEmbed);
-    return;
-  }
+    
+    if (currentEmbed) {
+        currentEmbed.destroy?.();
+        currentEmbed = null;
+    }
 
-  embedInstance?.render();
+  let embedInstance: LiveboardEmbed | SearchEmbed | null = null;
+
+    if (typeofEmbed === "Liveboard") {
+        embedInstance = new LiveboardEmbed("#ts-embed", {
+          ...validateAndMergeViewConfig(viewConfig),
+        });
+    } else if (typeofEmbed === "SearchEmbed") {
+        embedInstance = new SearchEmbed("#ts-embed", {
+            ...viewConfig,
+        });
+    } else {
+        console.warn("Unrecognized typeofEmbed:", typeofEmbed);
+        return;
+    }
+
+  embedInstance.render();
   currentEmbed = embedInstance;
 
-  currentEmbed?.on("*" as any, (embedEvent: any, responderFn?: Function) => {
-    const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
-    if (responderFn && eventId) {
-      setTimeout(() => {
-        if (eventResponders.has(eventId)) {
-          console.warn(`Responder ${eventId} timeout!!`);
-          eventResponders.delete(eventId);
-        }
-      }, RESPONDER_TIMEOUT);
+    currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {
+      const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
+      if(responderFn && eventId) {
+        setTimeout(() => {
+          if (eventResponders.has(eventId)) {
+            console.warn(`Responder ${eventId} timeout!!`);
+            eventResponders.delete(eventId);
+          }
+        }, RESPONDER_TIMEOUT);
 
-      eventResponders.set(eventId, responderFn);
-    }
+        eventResponders.set(eventId, responderFn);
+      }
 
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({
-        type: "EMBED_EVENT",
-        eventId,
-        eventName: embedEvent.type,
-        data: embedEvent.data,
-        hasResponder: !!responderFn
-      })
-    );
+            window.ReactNativeWebView?.postMessage(
+                JSON.stringify({
+                    type: "EMBED_EVENT",
+                    eventId,
+                    eventName: embedEvent.type,
+                    data: embedEvent.data,
+                    hasResponder: !!responderFn
+                })
+            );
 
-  });
+    });
 }
-// setupThoughtSpotEmbed("Conversation", {});
+
 function cleanupStaleResponders() {
-  if (eventResponders.size > 100) {
+  if (eventResponders.size > 100) { 
     console.warn('High number of stored responders');
   }
 }
-
-// // Reset flag on visibility change
-// document.addEventListener('visibilitychange', () => {
-//     if (document.visibilityState === 'visible') {
-//         isVercelShellInitialized = false;
-//         initializeVercelShell();
-//     }
-// });
-
-// Global error handler
-window.addEventListener('error', (event) => {
-  alert('Global error caught:' + event.error);
-  // Optionally, send error details to a logging service
-});

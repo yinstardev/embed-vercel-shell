@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.725, user-scalable=yes, maximum-scale=0.725">
+    <meta name="viewport" content="width=device-width, initial-scale=0.725, user-scalable=no, maximum-scale=0.725">
     <title>Embed Shell</title>
     <style>
       html {
@@ -29,8 +29,7 @@
       }
 
       #ts-embed {
-        background-color: rgb(195, 0, 255);
-        height: 80vh;
+        height: 100vh;
         width: 100%;
         position: fixed;
         top: 0;
@@ -80,52 +79,28 @@
       } else if (screenWidth > 375 && screenWidth <= 430) {
         // Mid-sized devices like iPhone 14
         scale = 0.7;
-      } else {
+      } else if (screenWidth > 430 && screenWidth <= 768) {
         // Larger devices like iPhone 16 Pro and beyond
         scale = 0.725;
+      } else if (screenWidth > 768 && screenWidth <= 834) {
+        // iPad Mini and iPad (9th/10th gen)
+        scale = 0.8;
+      } else if (screenWidth > 834 && screenWidth <= 1024) {
+        // iPad Pro 11" and similar
+        scale = 0.85;
+      } else {
+        // iPad Pro 12.9" and larger devices
+        scale = 0.9;
       }
   
       const metaTag = document.querySelector("meta[name='viewport']") || document.createElement("meta");
       metaTag.name = "viewport";
-      metaTag.content = `width=device-width, initial-scale=${scale}, maximum-scale=${scale}, user-scalable=yes`;
+      metaTag.content = `width=device-width, initial-scale=${scale}, maximum-scale=${scale}, user-scalable=no`;
       
       if (!metaTag.parentNode) {
         document.head.appendChild(metaTag);
       }
-      // document.addEventListener('touchstart', function(e) {
-      // const target = e.target;
-      //   if (target && typeof target.click === 'function') {
-      //     target.click(); // simulates a second tap
-      //   }
-      // }, { passive: true });
-
-      document.addEventListener('touchstart', function (e) {
-        const target = e.target;
-        if (typeof target.click === 'function') {
-          target.click();
-          setTimeout(() => {
-            target.click(); // second click after a short delay
-          }, 100);
-        }
-      }, { passive: true });
-
-      ['touchstart', 'touchend'].forEach(eventType => {
-        document.addEventListener(eventType, function () {
-          const body = document.body;
-          if (eventType === 'touchstart') {
-            body.style.backgroundColor = '#ffeeba'; // light yellow
-          } else {
-            body.style.backgroundColor = '#c3e6cb'; // light green
-          }
-
-          // Reset after a short delay
-          setTimeout(() => {
-            body.style.backgroundColor = '';
-          }, 300);
-        }, { passive: true });
-      });
-
-
+  
       window.addEventListener('resize', function() {
         const newScreenWidth = window.innerWidth;
         if (newScreenWidth !== screenWidth) {
@@ -134,13 +109,22 @@
             scale = 0.65;
           } else if (screenWidth > 375 && screenWidth <= 430) {
             scale = 0.7;
-          } else {
+          } else if (screenWidth > 430 && screenWidth <= 768) {
             scale = 0.725;
+          } else if (screenWidth > 768 && screenWidth <= 834) {
+            // iPad Mini and iPad (9th/10th gen)
+            scale = 0.8;
+          } else if (screenWidth > 834 && screenWidth <= 1024) {
+            // iPad Pro 11" and similar
+            scale = 0.85;
+          } else {
+            // iPad Pro 12.9" and larger devices
+            scale = 0.9;
           }
         }
         const currentScale = scale;
-        if (metaTag.content !== `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=yes`) {
-          metaTag.content = `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=yes`;
+        if (metaTag.content !== `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`) {
+          metaTag.content = `width=device-width, initial-scale=${currentScale}, maximum-scale=${currentScale}, user-scalable=no`;
         }
       });
 
@@ -148,8 +132,6 @@
   </script>
   <body>
         <div id="ts-embed"></div>
-        <div style="background-color: red; width: 100%; height: 10%;">SODA</div>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/@thoughtspot/visual-embed-sdk/dist/tsembed.min.js" type="module"></script> -->
         <script type="module" src="/src/script.ts"></script>
   </body>
 

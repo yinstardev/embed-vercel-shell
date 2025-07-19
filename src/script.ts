@@ -6,9 +6,8 @@ import {
   EmbedConfig as BaseEmbedConfig,
   AuthStatus,
   EmbedConfig,
-  Action,
 } from "@thoughtspot/visual-embed-sdk";
-
+import { validateAndMergeViewConfig } from "./utils";
 
 declare global {
   interface Window {
@@ -41,9 +40,11 @@ let initializationComplete = false;
 let currentViewConfig: any;
 
 let isVercelShellInitialized = false;
+const eventResponders = new Map<string, Function>();
+
+const RESPONDER_TIMEOUT = 30000;
 
 window.addEventListener("message", (event: any) => {
-  // let parsed: ParsedMessage;
   let parsed: any;
   parsed = event.data as any;
   handleMessages(parsed);
@@ -66,6 +67,10 @@ const handleMessages = (parsed: any) => {
     case "HOST_EVENT":
       handleHostEvent(parsed);
       break;
+    
+    case "EMBED_EVENT_REPLY":
+      handleEmbedEvent(parsed);
+      break;
 
     default:
       console.warn("Unknown message type:", parsed.type);
@@ -73,32 +78,41 @@ const handleMessages = (parsed: any) => {
 
 }
 
+const handleEmbedEvent = (parsed: any) => {
+  const eventId = parsed.eventId;
+  if(eventId){
+    const responderFn = eventResponders.get(eventId);
+    if(responderFn) {
+      responderFn(parsed.payload);
+      eventResponders.delete(eventId);
+    }
+  }
+}
+
 const handleInit = async (parsed: any) => {
 
     currentEmbedConfig = parsed.payload || null;
-
     if (currentEmbedConfig && currentEmbedConfig.getTokenFromSDK === true) {
       currentEmbedConfig.getAuthToken = async () => requestAuthToken();
     }
      if (currentEmbedConfig) {
-      const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
+      try {
+        const authEventEmitter = await init(currentEmbedConfig as EmbedConfig);
+
       let initTiming = { start: Date.now(), end: 0, total: 0 };
       authEventEmitter.on(AuthStatus.SUCCESS, () => {
-        alert("Success: TrustedAuthTokenCookieless");
-        console.log("Success: TrustedAuthTokenCookieless");
+        console.info("Success: TrustedAuthTokenCookieless");
       });
 
       authEventEmitter.on(AuthStatus.FAILURE, (error) => {
-        alert(`Auth fail ${error}`);
-        console.log(`Auth fail ${error}`);
+        console.info(`Auth fail ${error}`);
         initializationComplete = false;
       });
 
       authEventEmitter.on(AuthStatus.SDK_SUCCESS, () => {
-        alert("Success: SDK_SUCCESS");
         initTiming.end = Date.now();
         initTiming.total = (initTiming.end - initTiming.start) / 1000;
-        console.log("Login success");
+        console.info("Login success");
         
         initializationComplete = true;
         if (currentViewConfig) {
@@ -108,8 +122,11 @@ const handleInit = async (parsed: any) => {
           );
         }
       });
+    } catch (error) {
+      console.error("Error initializing embed:", error);
     }
-}; 
+}
+}
 
 const handleTokenResponse = (parsed: any) => {
   if (tokenResolver && parsed.token) {
@@ -119,13 +136,13 @@ const handleTokenResponse = (parsed: any) => {
 
 const handleEmbed = (parsed: any) => {
   if (!currentEmbedConfig) {
-    console.log("No embedConfig in place. Did you call INIT first?");
+    console.info("No embedConfig in place. Did you call INIT first?");
     return;
   }
   const { embedType, viewConfig } = parsed;
 
   if (!embedType || !viewConfig) {
-    console.log("Missing typeofEmbed or viewConfig in EMBED message.");
+    console.error("Missing typeofEmbed or viewConfig in EMBED message.");
     return;
   }
     currentViewConfig = {
@@ -134,12 +151,12 @@ const handleEmbed = (parsed: any) => {
     };
 
   if(!initializationComplete){
-    console.log("initialization not complete yet");
+    console.warn("initialization not complete yet");
     return;
   }
 
   setupThoughtSpotEmbed(embedType, viewConfig);
-  console.log("EMBED setup complete!");
+  console.info("EMBED setup complete!");
 }
 
 function requestAuthToken(): Promise<string> {
@@ -165,7 +182,7 @@ function initializeVercelShell() {
     initVercelShellMsg();
     setTimeout(() => {
         if (!isVercelShellInitialized) {
-            console.log("Retrying Vercel shell initialization...");
+            console.info("Retrying Vercel shell initialization...");
             initVercelShellMsg();
         }
     }, 1000);
@@ -227,12 +244,7 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
 
     if (typeofEmbed === "Liveboard") {
         embedInstance = new LiveboardEmbed("#ts-embed", {
-            ...viewConfig,
-            hiddenActions: [Action.UpdateTML,Action.ManagePipelines, Action.SchedulesList,Action.EditTML, Action.SyncToSlack, Action.SyncToTeams, Action.Schedule,Action.AskAi, Action.CreateMonitor, Action.AIHighlights, Action.Share, Action.ShareViz, Action.RenameModalTitleDescription, Action.Edit, Action.MakeACopy, Action.DownloadAsPdf, Action.DownloadAsCsv, Action.ExportTML, Action.DownloadAsPdf, Action.Present, Action.RequestVerification, Action.LiveboardInfo, Action.Pin, Action.Explore, Action.ShowUnderlyingData, Action.Download, Action.CopyLink, Action.SpotIQAnalyze, Action.SyncToOtherApps, Action.SyncToSheets, Action.SyncToSheets, Action.SyncToOtherApps],
-            additionalFlags: {
-              "flipTooltipToContextMenuEnabled": "true",
-              "contextMenuEnabledOnWhichClick": "left",
-            }
+          ...validateAndMergeViewConfig(viewConfig),
         });
     } else if (typeofEmbed === "SearchEmbed") {
         embedInstance = new SearchEmbed("#ts-embed", {
@@ -246,24 +258,34 @@ function setupThoughtSpotEmbed(typeofEmbed: string, viewConfig: Record<string, a
   embedInstance.render();
   currentEmbed = embedInstance;
 
-    currentEmbed.on("*" as any, (embedEvent: any, data: any) => {
-        const typeOfEvent = embedEvent.type;
-        if (typeOfEvent) {
+    currentEmbed.on("*" as any, (embedEvent: any, responderFn?: Function) => {
+      const eventId = responderFn ? Math.random().toString(36).substring(7) : undefined;
+      if(responderFn && eventId) {
+        setTimeout(() => {
+          if (eventResponders.has(eventId)) {
+            console.warn(`Responder ${eventId} timeout!!`);
+            eventResponders.delete(eventId);
+          }
+        }, RESPONDER_TIMEOUT);
+
+        eventResponders.set(eventId, responderFn);
+      }
+
             window.ReactNativeWebView?.postMessage(
                 JSON.stringify({
                     type: "EMBED_EVENT",
-                    eventName: typeOfEvent,
+                    eventId,
+                    eventName: embedEvent.type,
                     data: embedEvent.data,
+                    hasResponder: !!responderFn
                 })
             );
-        }
+
     });
 }
 
-// // Reset flag on visibility change
-// document.addEventListener('visibilitychange', () => {
-//     if (document.visibilityState === 'visible') {
-//         isVercelShellInitialized = false;
-//         initializeVercelShell();
-//     }
-// });
+function cleanupStaleResponders() {
+  if (eventResponders.size > 100) { 
+    console.warn('High number of stored responders');
+  }
+}

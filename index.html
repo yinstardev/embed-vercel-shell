@@ -29,7 +29,6 @@
       }
 
       #ts-embed {
-        background-color: red;
         height: 100vh;
         width: 100%;
         position: fixed;
@@ -80,9 +79,18 @@
       } else if (screenWidth > 375 && screenWidth <= 430) {
         // Mid-sized devices like iPhone 14
         scale = 0.7;
-      } else {
+      } else if (screenWidth > 430 && screenWidth <= 768) {
         // Larger devices like iPhone 16 Pro and beyond
         scale = 0.725;
+      } else if (screenWidth > 768 && screenWidth <= 834) {
+        // iPad Mini and iPad (9th/10th gen)
+        scale = 0.8;
+      } else if (screenWidth > 834 && screenWidth <= 1024) {
+        // iPad Pro 11" and similar
+        scale = 0.85;
+      } else {
+        // iPad Pro 12.9" and larger devices
+        scale = 0.9;
       }
   
       const metaTag = document.querySelector("meta[name='viewport']") || document.createElement("meta");
@@ -101,8 +109,17 @@
             scale = 0.65;
           } else if (screenWidth > 375 && screenWidth <= 430) {
             scale = 0.7;
-          } else {
+          } else if (screenWidth > 430 && screenWidth <= 768) {
             scale = 0.725;
+          } else if (screenWidth > 768 && screenWidth <= 834) {
+            // iPad Mini and iPad (9th/10th gen)
+            scale = 0.8;
+          } else if (screenWidth > 834 && screenWidth <= 1024) {
+            // iPad Pro 11" and similar
+            scale = 0.85;
+          } else {
+            // iPad Pro 12.9" and larger devices
+            scale = 0.9;
           }
         }
         const currentScale = scale;
@@ -115,7 +132,6 @@
   </script>
   <body>
         <div id="ts-embed"></div>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/@thoughtspot/visual-embed-sdk/dist/tsembed.min.js" type="module"></script> -->
         <script type="module" src="/src/script.ts"></script>
   </body>
 
